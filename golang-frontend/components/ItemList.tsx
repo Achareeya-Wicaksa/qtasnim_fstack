@@ -15,6 +15,8 @@ const ItemList = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete confirmation modal
+  const [itemToDelete, setItemToDelete] = useState<Item | null>(null); // Store item to be deleted
 
   useEffect(() => {
     const getItems = async () => {
@@ -32,9 +34,11 @@ const ItemList = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
-    await deleteItem(id);
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    setShowModal(false);
+    if (itemToDelete) {
+      await deleteItem(id);
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      setShowDeleteModal(false); // Close delete modal
+    }
   };
 
   const openCreateModal = () => {
@@ -47,6 +51,11 @@ const ItemList = () => {
     setIsEditMode(true);
     setCurrentItem(item);
     setShowModal(true);
+  };
+
+  const openDeleteModal = (item: Item) => {
+    setItemToDelete(item); // Set item to be deleted
+    setShowDeleteModal(true); // Open delete confirmation modal
   };
 
   const handleSave = async (item: Item) => {
@@ -67,7 +76,7 @@ const ItemList = () => {
       if (searchTerm) {
         return item.name.toLowerCase().includes(searchTerm.toLowerCase());
       }
-      return true; 
+      return true;
     })
     .filter((item) => {
       if (filterDate.start && filterDate.end) {
@@ -76,7 +85,7 @@ const ItemList = () => {
         const endDate = new Date(filterDate.end);
         return date >= startDate && date <= endDate;
       }
-      return true; 
+      return true;
     })
     .sort((a, b) => {
       if (sortBy === "name") {
@@ -108,8 +117,8 @@ const ItemList = () => {
             className="border px-4 py-2 rounded-lg bg-white"
           >
             <option value="name">Sort by Name</option>
-{/*             <option value="transaction_date">Sort by Date</option>
- */}            <option value="newest">Sort by Newest</option>
+{/*         <option value="transaction_date">Sort by Date</option>
+ */}        <option value="newest">Sort by Newest</option>
             <option value="oldest">Sort by Oldest</option>
           </select>
         </div>
@@ -169,7 +178,7 @@ const ItemList = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => openDeleteModal(item)}
                     className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                   >
                     Delete
@@ -193,6 +202,30 @@ const ItemList = () => {
         onSave={handleSave}
         item={isEditMode ? currentItem : null}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && itemToDelete && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Delete Item</h2>
+            <p>Are you sure you want to delete "{itemToDelete.name}"?</p>
+            <div className="flex justify-end space-x-2 mt-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(itemToDelete.id)}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

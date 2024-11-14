@@ -6,7 +6,7 @@ import Modal from "./Modal";
 const ItemList = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "transaction_date">("name");
+  const [sortBy, setSortBy] = useState<"name" | "transaction_date" | "newest" | "oldest">("name");
   const [filterDate, setFilterDate] = useState<{ start: string; end: string }>({
     start: "",
     end: "",
@@ -63,30 +63,34 @@ const ItemList = () => {
   };
 
   const filteredItems = items
-  .filter((item) => {
-    // Only apply search filter if there's a search term
-    if (searchTerm) {
-      return item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-    return true; // No filter applied, include all items
-  })
-  .filter((item) => {
-    // Only apply date filter if both start and end dates are selected
-    if (filterDate.start && filterDate.end) {
-      const date = new Date(item.transaction_date);
-      const startDate = new Date(filterDate.start);
-      const endDate = new Date(filterDate.end);
-      return date >= startDate && date <= endDate;
-    }
-    return true; // No filter applied, include all items
-  })
-  .sort((a, b) => {
-    // Apply sorting
-    return sortBy === "name"
-      ? a.name.localeCompare(b.name)
-      : new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime();
-  });
-
+    .filter((item) => {
+      // Only apply search filter if there's a search term
+      if (searchTerm) {
+        return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+      return true; // No filter applied, include all items
+    })
+    .filter((item) => {
+      // Only apply date filter if both start and end dates are selected
+      if (filterDate.start && filterDate.end) {
+        const date = new Date(item.transaction_date);
+        const startDate = new Date(filterDate.start);
+        const endDate = new Date(filterDate.end);
+        return date >= startDate && date <= endDate;
+      }
+      return true; // No filter applied, include all items
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") {
+        return a.name.localeCompare(b.name);
+      } else if (sortBy === "newest") {
+        return new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime();
+      } else if (sortBy === "oldest") {
+        return new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime();
+      } else {
+        return new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime();
+      }
+    });
 
   return (
     <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
@@ -101,12 +105,14 @@ const ItemList = () => {
         <div>
           <select
             onChange={(e) =>
-              setSortBy(e.target.value as "name" | "transaction_date")
+              setSortBy(e.target.value as "name" | "transaction_date" | "newest" | "oldest")
             }
             className="border px-4 py-2 rounded-lg bg-white"
           >
             <option value="name">Sort by Name</option>
             <option value="transaction_date">Sort by Date</option>
+            <option value="newest">Sort by Newest</option>
+            <option value="oldest">Sort by Oldest</option>
           </select>
         </div>
         <div>

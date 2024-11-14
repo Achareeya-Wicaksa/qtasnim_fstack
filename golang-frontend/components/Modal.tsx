@@ -5,7 +5,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (item: Item) => void;
-  item: Item | null; // This will hold the item to edit, if any
+  item: Item | null; 
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, item }) => {
@@ -14,23 +14,21 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, item }) => {
     name: "",
     stock: 0,
     sold: 0,
-    transaction_date: "", // Empty initially
+    transaction_date: "", 
     category: "",
   });
 
-  // Populate formData with the item details when in edit mode
   useEffect(() => {
     if (item) {
       setFormData(item);
     } else {
-      // Set current date for new item
-      const today = new Date().toISOString(); // Get today's date in ISO format
+      const today = new Date().toISOString(); 
       setFormData({
         id: 0,
         name: "",
         stock: 0,
         sold: 0,
-        transaction_date: today, // Set today's date
+        transaction_date: today, 
         category: "",
       });
     }
@@ -42,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, item }) => {
   };
 
   const handleSubmit = () => {
-    onSave(formData); // Save the form data with today's date for new items
+    onSave(formData); 
   };
 
   if (!isOpen) return null;
@@ -77,8 +75,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, item }) => {
             className="w-full border px-3 py-2 rounded-lg"
           />
 
-          {/* Tanggal diatur otomatis saat membuat item baru */}
-          {/* Tidak ada input untuk tanggal di form */}
           
           <input
             type="text"

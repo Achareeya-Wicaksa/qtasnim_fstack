@@ -1,4 +1,3 @@
-// controllers/item_controller.go
 package controllers
 
 import (
@@ -10,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateItem handles POST /items
 func CreateItem(c *gin.Context) {
 	var item models.Item
 	if err := c.ShouldBindJSON(&item); err != nil {
@@ -22,11 +20,9 @@ func CreateItem(c *gin.Context) {
 	c.JSON(http.StatusOK, item)
 }
 
-// GetItems handles GET /items
 func GetItems(c *gin.Context) {
 	var items []models.Item
 
-	// Search and filter logic
 	name := c.Query("name")
 	if name != "" {
 		config.DB = config.DB.Where("name LIKE ?", "%"+name+"%")
@@ -40,7 +36,6 @@ func GetItems(c *gin.Context) {
 		config.DB = config.DB.Where("transaction_date BETWEEN ? AND ?", start, end)
 	}
 
-	// Sorting logic
 	sortBy := c.Query("sort_by")
 	if sortBy != "" {
 		config.DB = config.DB.Order(sortBy)
@@ -50,7 +45,6 @@ func GetItems(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
-// GetItem handles GET /items/:id
 func GetItem(c *gin.Context) {
 	id := c.Param("id")
 	var item models.Item
@@ -63,7 +57,6 @@ func GetItem(c *gin.Context) {
 	c.JSON(http.StatusOK, item)
 }
 
-// UpdateItem handles PUT /items/:id
 func UpdateItem(c *gin.Context) {
 	id := c.Param("id")
 	var item models.Item
@@ -82,7 +75,6 @@ func UpdateItem(c *gin.Context) {
 	c.JSON(http.StatusOK, item)
 }
 
-// DeleteItem handles DELETE /items/:id
 func DeleteItem(c *gin.Context) {
 	id := c.Param("id")
 	var item models.Item

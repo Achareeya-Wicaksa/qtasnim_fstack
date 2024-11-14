@@ -11,15 +11,13 @@ func main() {
 
 	config.ConnectDB()
 
-    // Initialize Gin router
     r := gin.Default()
 
-    // CORS configuration
     r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"http://localhost:3000"}, // Frontend URL
-        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"}, // Allowed HTTP methods
-        AllowHeaders:     []string{"Content-Type", "Authorization"}, // Allowed headers
-        AllowCredentials: true, // Allow cookies if needed
+        AllowOrigins:     []string{"http://localhost:3000"}, 
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"}, 
+        AllowHeaders:     []string{"Content-Type", "Authorization"}, 
+        AllowCredentials: true, 
     }))
 
     // API routes
@@ -29,6 +27,5 @@ func main() {
     r.PUT("/items/:id", controllers.UpdateItem)
     r.DELETE("/items/:id", controllers.DeleteItem)
 
-    // Start the server
-    r.Run(":8080") // Default port 8080
+    r.Run(":8080") 
 }

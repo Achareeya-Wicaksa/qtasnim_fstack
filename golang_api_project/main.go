@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-    // Connect to the database
-    config.ConnectDB()
+
+	config.ConnectDB()
 
     // Initialize Gin router
     r := gin.Default()
